@@ -11,12 +11,13 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 import mlflow
 
+
 # define functions
 def main(args):
 
     # TO DO: enable autologging
     mlflow.autolog()
-    
+
     # read data
     df = get_csvs_df(args.training_data)
 
@@ -41,35 +42,55 @@ def get_csvs_df(path):
 
 # TO DO: add function to split data
 
+
 def split_data(df):
- 
-    X, y = df[['Pregnancies','PlasmaGlucose','DiastolicBloodPressure','TricepsThickness','SerumInsulin','BMI','DiabetesPedigree','Age']].values, df['Diabetic'].values
+
+    X, y = (
+        df[
+            [
+                "Pregnancies",
+                "PlasmaGlucose",
+                "DiastolicBloodPressure",
+                "TricepsThickness",
+                "SerumInsulin",
+                "BMI",
+                "DiabetesPedigree",
+                "Age",
+            ]
+        ].values,
+        df["Diabetic"].values,
+    )
     return train_test_split(X, y, test_size=0.30, random_state=0)
+
 
 def train_model(reg_rate, X_train, y_train):
     # train model
-    return LogisticRegression(C=1/reg_rate, solver="liblinear").fit(X_train, y_train)
+    return LogisticRegression(C=1 / reg_rate, solver="liblinear").fit(X_train, y_train)
+
 
 def evaluate_model(model, X_test, y_test):
+
+    # evaluate model
+
     y_hat = model.predict(X_test)
     acc = np.average(y_hat == y_test)
     print(f"Model accuracy: {acc}")
+
 
 def parse_args():
     # setup arg parser
     parser = argparse.ArgumentParser()
 
     # add arguments
-    parser.add_argument("--training_data", dest='training_data',
-                        type=str)
-    parser.add_argument("--reg_rate", dest='reg_rate',
-                        type=float, default=0.01)
+    parser.add_argument("--training_data", dest="training_data", type=str)
+    parser.add_argument("--reg_rate", dest="reg_rate", type=float, default=0.01)
 
     # parse args
     args = parser.parse_args()
 
     # return args
     return args
+
 
 # run script
 if __name__ == "__main__":

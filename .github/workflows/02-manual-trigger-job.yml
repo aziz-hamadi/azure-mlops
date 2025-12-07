@@ -9,11 +9,20 @@ jobs:
     steps:
     - name: Check out repo
       uses: actions/checkout@main
+      
     - name: Install az ml extension
       run: az extension add -n ml -y
     - name: Azure login
       uses: azure/login@v1
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
+
+    - name: install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt 
+    - name: run pyests
+      run: |
+        pytest tests/
     - name: Run AML job
       run: az ml job create --file src/job.yml --web --resource-group ${{vars.RSGROUP}} --workspace-name ${{vars.WORKSPACE}}

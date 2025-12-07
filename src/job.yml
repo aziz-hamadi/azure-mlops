@@ -11,8 +11,8 @@ inputs:
   reg_rate: 0.01
 environment: azureml://registries/azureml/environments/sklearn-1.5/versions/35
 compute: azureml:mlops-classification-cluster
-experiment_name: training-job-with-cli
-description: simple classification training job
+experiment_name: training-job-with-github-actions
+description: simple classification training job with github actions with manual trigger
 display_name: classification-diabetes
 tags:
     training: classification
