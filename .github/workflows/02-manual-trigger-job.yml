@@ -1,9 +1,10 @@
-name: pull request trigger for a Azure Machine Learning job
+name: push trigger for a Azure Machine Learning training job
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+
 jobs:
   train:
     runs-on: ubuntu-latest
