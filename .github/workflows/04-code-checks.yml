@@ -11,10 +11,10 @@ jobs:
     steps:
     - name: Check out repo
       uses: actions/checkout@main
-    - name: Use Python version 3.8
+    - name: Use Python version 3.11.13
       uses: actions/setup-python@v3
       with:
-        python-version: '3.8'
+        python-version: '3.11.13'
 
     - name: Install dependencies
       run: |
