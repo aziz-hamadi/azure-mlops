@@ -1,0 +1,45 @@
+name: Train Model - Dev then Prod
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  train-dev:
+    name: Train on Dev Cluster
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+
+    - name: Run AML job on Dev
+      run: az ml job create --file src/job-dev.yml --stream --web --resource-group ${{ vars.RSGROUP }} --workspace-name ${{ vars.WORKSPACE }}
+
+  train-prod:
+    name: Train on Prod Cluster
+    needs: train-dev
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+
+    - name: Run AML job on Prod
+      run: az ml job create --file src/job-prod.yml --stream --web --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }}

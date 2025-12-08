@@ -1,0 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/workspace.schema.json
+name: classification-prod
+location: francecentral
+display_name: classification-prod
+description: A workspace for pre-production classification models
+tags:
+  purpose: pre-production

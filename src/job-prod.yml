@@ -1,0 +1,20 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: model
+command: >-
+  python train.py
+  --training_data ${{inputs.training_data}}
+  --reg_rate ${{inputs.reg_rate}}
+inputs:
+  training_data:
+    type: uri_folder 
+    path: azureml:/subscriptions/b1bd68bf-cd6a-4b93-987b-2dd8f7f21596/resourceGroups/mlops-prod/providers/Microsoft.MachineLearningServices/workspaces/classification-prod/data/diabetes-prod-folder/versions/1
+  reg_rate: 0.01
+environment: azureml://registries/azureml/environments/sklearn-1.5/versions/35
+compute: azureml:classification-cluster-prod
+experiment_name: training-job-with-github-actions-prod
+description: simple classification training job with github actions for production
+display_name: classification-diabetes-prod
+tags:
+    training: classification
+    framework: sklearn
+    environment: production
