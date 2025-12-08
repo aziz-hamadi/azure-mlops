@@ -8,6 +8,7 @@ on:
 jobs:
   train-dev:
     name: Train on Dev Cluster
+    environment: dev
     runs-on: ubuntu-latest
     steps:
     - name: Check out repo
