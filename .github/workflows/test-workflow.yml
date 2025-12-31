@@ -96,19 +96,14 @@ jobs:
           endpoint_name="${{ needs.register-model.outputs.model_name }}-endpoint"
           echo "Checking endpoint: $endpoint_name"
 
-          # Try to get endpoint, capture output and exit code
-          output=$(az ml online-endpoint show --name "$endpoint_name" --resource-group "${{ vars.RSGROUP_PROD }}" --workspace-name "${{ vars.WORKSPACE_PROD }}" 2>&1)
-          exit_code=$?
-
-          if [ $exit_code -eq 0 ]; then
+          # Try to get endpoint, suppress error output
+          if az ml online-endpoint show --name "$endpoint_name" --resource-group "${{ vars.RSGROUP_PROD }}" --workspace-name "${{ vars.WORKSPACE_PROD }}" > /dev/null 2>&1; then
             echo "endpoint_exists=true" >> $GITHUB_OUTPUT
             echo "✓ Endpoint '$endpoint_name' exists"
           else
             echo "endpoint_exists=false" >> $GITHUB_OUTPUT
             echo "✗ Endpoint '$endpoint_name' does not exist (will create)"
           fi
-
-          echo "endpoint_name=$endpoint_name" >> $GITHUB_OUTPUT
 
       - name: Create Endpoint (if needed)
         if: steps.check-endpoint.outputs.endpoint_exists == 'false'
