@@ -94,20 +94,36 @@ jobs:
       - name: Check if Endpoint Exists
         id: check-endpoint
         run: |
+          # Debug: Check what we're getting from previous job
+          echo "DEBUG: needs.register-model.outputs.model_name = '${{ needs.register-model.outputs.model_name }}'"
+              
           endpoint_name="${{ needs.register-model.outputs.model_name }}-endpoint"
-          echo "Checking endpoint: $endpoint_name"
-
-          # Try to get endpoint, suppress error output
-          if az ml online-endpoint show --name "$endpoint_name" --resource-group "${{ vars.RSGROUP_PROD }}" --workspace-name "${{ vars.WORKSPACE_PROD }}" > /dev/null 2>&1; then
-            echo "endpoint_exists=true" >> $GITHUB_OUTPUT
-            echo "✓ Endpoint '$endpoint_name' exists"
-          else
-            echo "endpoint_exists=false" >> $GITHUB_OUTPUT
-            echo "✗ Endpoint '$endpoint_name' does not exist (will create)"
+              
+          # Azure ML requires lowercase, alphanumeric and hyphens only
+          # Replace underscores with hyphens and convert to lowercase
+          endpoint_name=$(echo "$endpoint_name" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
+              
+          echo "DEBUG: Constructed endpoint_name = '$endpoint_name'"
+              
+          if [ -z "$endpoint_name" ] || [ "$endpoint_name" = "-endpoint" ]; then
+            echo "ERROR: endpoint_name is empty or invalid!"
+            echo "This means model_name from register-model job is not being passed correctly"
+            exit 1
           fi
+    
+    echo "Checking endpoint: $endpoint_name"
 
-          echo "endpoint_name=$endpoint_name" >> $GITHUB_OUTPUT
-          echo "DEBUG: Set GITHUB_OUTPUT endpoint_name=$endpoint_name"
+    # Try to get endpoint, suppress error output
+    if az ml online-endpoint show --name "$endpoint_name" --resource-group "${{ vars.RSGROUP_PROD }}" --workspace-name "${{ vars.WORKSPACE_PROD }}" > /dev/null 2>&1; then
+      echo "endpoint_exists=true" >> $GITHUB_OUTPUT
+      echo "✓ Endpoint '$endpoint_name' exists"
+    else
+      echo "endpoint_exists=false" >> $GITHUB_OUTPUT
+      echo "✗ Endpoint '$endpoint_name' does not exist (will create)"
+    fi
+
+    echo "endpoint_name=$endpoint_name" >> $GITHUB_OUTPUT
+    echo "DEBUG: Set GITHUB_OUTPUT endpoint_name=$endpoint_name"
 
       - name: Create Endpoint (if needed)
         if: steps.check-endpoint.outputs.endpoint_exists == 'false'
