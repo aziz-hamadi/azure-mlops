@@ -1,0 +1,12 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: blue-sklearn-deployment
+endpoint_name: <endpoint-name>
+model: azureml:<model-name>:<model-version>
+
+code_configuration:
+  code: ./src/model
+  scoring_script: score.py
+
+instance_type: STANDARD_D2AS_V4
+instance_count: 1
+environment: azureml:diabetes-sklearn-inference-environment:2

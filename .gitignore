@@ -127,3 +127,28 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# python files
+test.py
+
+# configs 
+azure-service-principal-dev.json
+azure-service-principal-prod.json
+config.json
+
+# mlflow
+
+mlruns/
+
+# personal 
+personal_docs/
+.vscode/
+
+# yaml test files
+test-*.yml
+
+# azure files
+azure/
+
+# model artifacts
+downloaded-model/

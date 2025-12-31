@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
+name: <name-for-model>
+path: <path-to-your-model>
+type: mlflow_model
+version: 1
+description: "Model registered from MLflow from github action"
