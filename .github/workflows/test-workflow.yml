@@ -69,6 +69,7 @@ jobs:
           model_name="${{ needs.train-prod.outputs.job_name }}-model-prod"
           az ml model create --file model-config.yml --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }}
           echo "model_name=$model_name" >> $GITHUB_OUTPUT
+          echo "DEBUG: Registered model: $model_name"
 
   create-or-check-endpoint:
     name: Create Endpoint
@@ -104,6 +105,9 @@ jobs:
             echo "endpoint_exists=false" >> $GITHUB_OUTPUT
             echo "✗ Endpoint '$endpoint_name' does not exist (will create)"
           fi
+
+          echo "endpoint_name=$endpoint_name" >> $GITHUB_OUTPUT
+          echo "DEBUG: Set GITHUB_OUTPUT endpoint_name=$endpoint_name"
 
       - name: Create Endpoint (if needed)
         if: steps.check-endpoint.outputs.endpoint_exists == 'false'
