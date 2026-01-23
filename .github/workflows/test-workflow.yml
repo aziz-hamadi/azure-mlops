@@ -26,14 +26,15 @@ jobs:
       - name: Run AML job on Prod
         id: train
         run: |
+
           job_name=$(az ml job create --file src/job-prod.yml --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }} --query name --output tsv)
+
+          # wait for job to complete and stream logs
+          az ml job stream --name "$job_name" --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }}
 
           # Azure ML requires lowercase, alphanumeric and hyphens only
           # lowercase the job name and replace underscores with hyphens (and making sure to keep less than 32 chars)
           job_name=$(echo "$job_name" | cut -d'_' -f1,2 | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
-
-          # wait for job to complete and stream logs
-          az ml job stream --name "$job_name" --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }}
           echo "job_name=$job_name" >> $GITHUB_OUTPUT
 
   register-model:
