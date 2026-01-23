@@ -27,6 +27,12 @@ jobs:
         id: train
         run: |
           job_name=$(az ml job create --file src/job-prod.yml --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }} --query name --output tsv)
+
+          # Azure ML requires lowercase, alphanumeric and hyphens only
+          # lowercase the job name and replace underscores with hyphens (and making sure to keep less than 32 chars)
+          job_name=$(echo "$job_name" | cut -d'_' -f1,2 | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
+
+          # wait for job to complete and stream logs
           az ml job stream --name "$job_name" --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }}
           echo "job_name=$job_name" >> $GITHUB_OUTPUT
 
@@ -98,10 +104,6 @@ jobs:
           echo "DEBUG: needs.register-model.outputs.model_name = '${{ needs.register-model.outputs.model_name }}'"
 
           endpoint_name="${{ needs.register-model.outputs.model_name }}-endpoint"
-
-          # Azure ML requires lowercase, alphanumeric and hyphens only
-          # Replace underscores with hyphens and convert to lowercase
-          endpoint_name=$(echo "$endpoint_name" | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
 
           echo "DEBUG: Constructed endpoint_name = '$endpoint_name'"
 
