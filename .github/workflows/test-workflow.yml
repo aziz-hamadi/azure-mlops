@@ -163,9 +163,12 @@ jobs:
           model_name="${{ needs.register-model.outputs.model_name }}"
           deployment_name="blue-deployment"
           model_path=$(az ml model show --name $model_name --version 1 --query path -o tsv --resource-group ${{ vars.RSGROUP_PROD }} --workspace-name ${{ vars.WORKSPACE_PROD }})
+          model_version="1"
 
+          # Replace placeholders in template
           sed -e "s|<endpoint-name>|$endpoint_name|g" \
               -e "s|<model-name>|$model_name|g" \
+              -e "s|<model-version>|$model_version|g" \
               -e "s|<deployment-name>|$deployment_name|g" \
               -e "s|<model-path>|$model_path|g" \
               azure-templates/deployment-template.yml > deployment-config.yml
