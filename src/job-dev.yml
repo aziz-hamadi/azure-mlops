@@ -6,8 +6,8 @@ command: >-
   --reg_rate ${{inputs.reg_rate}}
 inputs:
   training_data:
-    type: uri_folder 
-    path: azureml:/subscriptions/b1bd68bf-cd6a-4b93-987b-2dd8f7f21596/resourceGroups/azure-mlops/providers/Microsoft.MachineLearningServices/workspaces/sklearn-classification/data/diabetes-dev-folder/versions/1
+    type: uri_folder
+    path: ${AML_DATA_PATH_DEV}
   reg_rate: 0.01
 environment: azureml://registries/azureml/environments/sklearn-1.5/versions/35
 compute: azureml:mlops-classification-cluster

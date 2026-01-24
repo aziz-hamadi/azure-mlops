@@ -152,3 +152,8 @@ azure/
 
 # model artifacts
 downloaded-model/
+
+local_data_paths.txt
+
+#ignore temporary generated processed job yaml files
+src/job-*-processed.yml
