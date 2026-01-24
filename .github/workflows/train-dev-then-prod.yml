@@ -23,7 +23,7 @@ jobs:
         run: az extension add -n ml -y
 
       - name: Adding dataset path variable in job YAML
-        run: envsubst < src/job-dev.yml > src/job-dev-processed.yml
+        run: envsubst '$AML_DATA_PATH_DEV' < src/job-dev.yml > src/job-dev-processed.yml
         env:
           AML_DATA_PATH_DEV: ${{ vars.AML_DATA_PATH_DEV }}
 
@@ -48,7 +48,7 @@ jobs:
         run: az extension add -n ml -y
 
       - name: Substitute variables in job YAML
-        run: envsubst < src/job-prod.yml > src/job-prod-processed.yml
+        run: envsubst '$AML_DATA_PATH_PROD' < src/job-prod.yml > src/job-prod-processed.yml
         env:
           AML_DATA_PATH_PROD: ${{ vars.AML_DATA_PATH_PROD }}
 
